@@ -10,9 +10,18 @@ struct TokenResponse: Decodable {
     var access_token: String
 }
 
+struct Geolocation: Decodable {
+    var id: String
+    var name: String
+    var latitude: Float64
+    var longitude: Float64
+    var radius: Int
+}
+
 struct Location: Decodable, Identifiable {
     var name: String
     var id: String
+    var geolocations: [Geolocation]
 }
 
 struct GetUserLocationsResponse: Decodable {
@@ -47,7 +56,7 @@ class API {
         return API(url: values.hostname, username: values.username, password: values.password)
     }
     
-    private func request(method: String, path: String, contentType: String?, data: String?, token: String?) async throws -> Data {
+    private func request<T: Decodable>(method: String, path: String, contentType: String?, data: String?, token: String?) async throws -> T {
         let url = URL(string: "\(self.url)\(path)")!
         var request = URLRequest(url: url)
         
@@ -75,43 +84,28 @@ class API {
             throw ApiError.runtimeError("Response failed without status code: \(returnedData)")
         }
         
-        return returnedData
+        do {
+            return try JSONDecoder().decode(T.self, from: returnedData)
+        } catch {
+            print("Unexpected error: \(error).")
+            throw error
+        }
     }
 
     func getToken() async throws -> String {
         let data = "client_id=DoorCloudWebApp&grant_type=password&username=\(username)&password=\(password)"
-        let response = try await self.request(method: "POST", path: "/token", contentType: "application/x-www-form-urlencoded", data: data, token: nil)
-        
-        do {
-            let decoded = try JSONDecoder().decode(TokenResponse.self, from: response)
-            return decoded.access_token
-        } catch {
-            print("Unexpected error: \(error).")
-            throw error
-        }
+        let response: TokenResponse = try await self.request(method: "POST", path: "/token", contentType: "application/x-www-form-urlencoded", data: data, token: nil)
+        return response.access_token
     }
     
     func getLocations(token: String) async throws -> [Location] {
-        let response = try await self.request(method: "GET", path: "/api/Location/GetUserLocations", contentType: nil, data: nil, token: token)
-
-        do {
-            let decoded = try JSONDecoder().decode(GetUserLocationsResponse.self, from: response)
-            return decoded.result
-        } catch {
-            print("Unexpected error: \(error).")
-            throw error
-        }
+        let response: GetUserLocationsResponse = try await self.request(method: "GET", path: "/api/Location/GetUserLocations", contentType: nil, data: nil, token: token)
+        print(response.result)
+        return response.result
     }
     
     func openDoor(token: String, accessPointId: String) async throws -> OpenDoorResponse {
         let data = "accessPointId=\(accessPointId)"
-        let response = try await self.request(method: "POST", path: "/api/Location/OpenDoorOnLocation", contentType: nil, data: data, token: token)
-
-        do {
-            return try JSONDecoder().decode(OpenDoorResponse.self, from: response)
-        } catch {
-            print("Unexpected error: \(error).")
-            throw error
-        }
+        return try await self.request(method: "POST", path: "/api/Location/OpenDoorOnLocation", contentType: nil, data: data, token: token)
     }
 }
