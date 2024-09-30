@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @State var alertTitle = ""
+    @State var alertMessage = ""
+    @State var showAlert = false
+    
     @State private var username: String
     @State private var password: String
     @State private var hostname: String
@@ -52,8 +56,14 @@ struct SettingsView: View {
                             let _ = try await api.getToken()
                             
                             configuration.set(username: username, password: password, hostname: hostname)
+                            
+                            alertTitle = "Success"
+                            alertMessage = "Configuration saved."
+                            showAlert = true
                         } catch {
-                            print("Error: \(error).")
+                            alertTitle = "Error"
+                            alertMessage = "\(error)"
+                            showAlert = true
                         }
                     }
                 }
@@ -62,11 +72,16 @@ struct SettingsView: View {
             Button("Reset to production host") {
                 self.hostname = "https://api.doorcloud.com"
             }
-            Button("Reset to test host") {
-                self.hostname = "http://192.168.0.222:1323"
+            Button("Reset values to test configuration") {
+                self.username = "user@example.com"
+                self.password = "password"
+                self.hostname = "https://cloud-door-mock.test.dejanlevec.com"
             }
         }
         .padding()
+        .alert(isPresented: $showAlert, content: {
+            Alert(title: Text(self.alertTitle), message: Text(self.alertMessage), dismissButton: .default(Text("OK")))
+        })
     }
 }
 
