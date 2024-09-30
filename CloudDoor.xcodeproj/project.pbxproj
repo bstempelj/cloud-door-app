@@ -33,22 +33,9 @@
 		053F0ABA2CA9AE06008F0EA8 /* CloudDoorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CloudDoorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		052DDAF12CAB341300882F0E /* Exceptions for "CloudDoor" folder in "CloudDoor" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Untitled.swift,
-			);
-			target = 053F0A9F2CA9AE03008F0EA8 /* CloudDoor */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		053F0AA22CA9AE03008F0EA8 /* CloudDoor */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				052DDAF12CAB341300882F0E /* Exceptions for "CloudDoor" folder in "CloudDoor" target */,
-			);
 			path = CloudDoor;
 			sourceTree = "<group>";
 		};
