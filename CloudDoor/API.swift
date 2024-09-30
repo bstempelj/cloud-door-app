@@ -18,7 +18,7 @@ struct Geolocation: Decodable {
     var radius: Int
 }
 
-struct Location: Decodable, Identifiable {
+struct Location: Decodable {
     var name: String
     var id: String
     var geolocations: [Geolocation]
