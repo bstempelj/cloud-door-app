@@ -28,8 +28,12 @@ struct GetUserLocationsResponse: Decodable {
     var result: [Location]
 }
 
-struct OpenDoorResponseResult: Decodable {
+struct OpenDoorResponseResultData: Decodable {
     var id: String
+}
+
+struct OpenDoorResponseResult: Decodable {
+    var data: OpenDoorResponseResultData
 }
 
 struct OpenDoorResponse: Decodable {

@@ -36,7 +36,7 @@ struct ContentView: View {
         VStack {
             List(locations) { index in
                 HStack {
-                    Text("\(index.location.name) \(optionalDistanceToString(distance: index.distance))").foregroundStyle(index.inRadius ? .black : .gray)
+                    Text("\(index.location.name) \(optionalDistanceToString(distance: index.distance))")
                     Spacer()
                 }
                 .contentShape(Rectangle())
