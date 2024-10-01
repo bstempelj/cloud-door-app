@@ -18,7 +18,7 @@ struct Geolocation: Decodable {
     var radius: Int
 }
 
-struct Location: Decodable, Identifiable {
+struct Location: Decodable {
     var name: String
     var id: String
     var geolocations: [Geolocation]
@@ -28,8 +28,12 @@ struct GetUserLocationsResponse: Decodable {
     var result: [Location]
 }
 
-struct OpenDoorResponseResult: Decodable {
+struct OpenDoorResponseResultData: Decodable {
     var id: String
+}
+
+struct OpenDoorResponseResult: Decodable {
+    var data: OpenDoorResponseResultData
 }
 
 struct OpenDoorResponse: Decodable {
@@ -100,7 +104,6 @@ class API {
     
     func getLocations(token: String) async throws -> [Location] {
         let response: GetUserLocationsResponse = try await self.request(method: "GET", path: "/api/Location/GetUserLocations", contentType: nil, data: nil, token: token)
-        print(response.result)
         return response.result
     }
     
