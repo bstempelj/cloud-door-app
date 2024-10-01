@@ -45,13 +45,7 @@ struct ContentView: View {
                     self.locations = getLocationsWithDistance(locations: rawLocations, distanceToLocation: value)
                 }
                 .onTapGesture {
-                    if let distance = index.distance {
-                        let radius = index.location.geolocations[0].radius
-                        if distance > radius {
-                            alertTitle = "Error"
-                            alertMessage = "Door '\(index.location.name)' too far away (\(distance)m > \(radius)m)"
-                            showAlert = true
-                        } else {
+                    if index.inRadius {
                             Task {
                                 do {
                                     let api = API.initFromConfiguration(configuration: Configuration())
@@ -67,10 +61,14 @@ struct ContentView: View {
                                     showAlert = true
                                 }
                             }
-                        }
                     } else {
                         alertTitle = "Error"
-                        alertMessage = "Cannot open door, since location of the device is not known"
+                        
+                        if let distance = index.distance {
+                            alertMessage = "Door '\(index.location.name)' too far away (\(distance)m > \(index.location.geolocations[0].radius)m)"
+                        } else {
+                            alertMessage = "Cannot open door, since location of the device is not known"
+                        }
                         showAlert = true
                     }
                 }
