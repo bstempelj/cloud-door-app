@@ -12,7 +12,7 @@ struct ContentView: View {
     @State var alertTitle = ""
     @State var alertMessage = ""
     @State var showAlert = false
-    @State var locations: [LocationWithDistance] = []
+    @State var locations: [LocationWithDistance]
     
     @ObservedObject var locationManager = LocationManager()
     
@@ -22,7 +22,7 @@ struct ContentView: View {
     init() {
         // When starting the application, load locations from cache, to avoid waiting for the initial response from the API.
         let cachedLocations = cache.getCachedLocations() ?? []
-        self.locations = getLocationsWithDistance(locations: cachedLocations, distanceToLocation: locationManager.location)
+        self.locations = getLocationsWithDistance(locations: cachedLocations, distanceToLocation: nil)
     }
     
     func refresh() {
