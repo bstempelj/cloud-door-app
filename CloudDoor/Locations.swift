@@ -7,6 +7,25 @@
 
 import CoreLocation
 
+struct LocationWithDistance: Identifiable {
+    var id: String
+    var location: Location
+    var distance: Int?
+    var inRadius: Bool
+    
+    init(location: Location, distance: Int?) {
+        self.location = location
+        self.id = location.id
+        self.distance = distance
+        
+        if let distance = distance {
+            self.inRadius = distance < location.geolocations[0].radius
+        } else {
+            self.inRadius = false
+        }
+    }
+}
+
 func getLocationsWithDistance(locations: [Location], distanceToLocation: CLLocation?) -> [LocationWithDistance] {
     return locations.map { location in
         if let distanceToLocation = distanceToLocation {

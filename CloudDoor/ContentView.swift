@@ -8,18 +8,6 @@
 import CoreLocation
 import SwiftUI
 
-struct LocationWithDistance: Identifiable {
-    var id: String
-    var location: Location
-    var distance: Int?
-    
-    init(location: Location, distance: Int?) {
-        self.location = location
-        self.id = location.id
-        self.distance = distance
-    }
-}
-
 struct ContentView: View {
     @State var alertTitle = ""
     @State var alertMessage = ""
@@ -46,11 +34,9 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Text("\(String(format: "%f %f", locationManager.location?.coordinate.longitude ?? 0, locationManager.location?.coordinate.latitude ?? 0))º".uppercased())
-                        .font(.largeTitle)
             List(locations) { index in
                 HStack {
-                    Text("\(index.location.name) \(optionalDistanceToString(distance: index.distance))")
+                    Text("\(index.location.name) \(optionalDistanceToString(distance: index.distance))").foregroundStyle(index.inRadius ? .black : .gray)
                     Spacer()
                 }
                 .contentShape(Rectangle())
@@ -89,6 +75,12 @@ struct ContentView: View {
                     }
                 }
             }
+            if let placemark = locationManager.placemark {
+                Text("Location: \(placemark.subThoroughfare ?? "") \(placemark.thoroughfare ?? ""), \(placemark.locality ?? "")")
+            } else {
+                Text("Location: unknown")
+            }
+            
             Button("Refresh") {
                 refresh()
             }

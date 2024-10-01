@@ -100,7 +100,6 @@ class API {
     
     func getLocations(token: String) async throws -> [Location] {
         let response: GetUserLocationsResponse = try await self.request(method: "GET", path: "/api/Location/GetUserLocations", contentType: nil, data: nil, token: token)
-        print(response.result)
         return response.result
     }
     
