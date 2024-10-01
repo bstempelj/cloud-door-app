@@ -16,10 +16,12 @@ struct ContentView: View {
     
     @ObservedObject var locationManager = LocationManager()
     
+    let configuration = Configuration()
+    
     func refresh() {
         Task {
             do {
-                let api = API.initFromConfiguration(configuration: Configuration())
+                let api = API.initFromConfiguration(configuration: self.configuration)
                 let token = try await api.getToken()
                 let locations = try await api.getLocations(token: token)
                 
@@ -78,14 +80,12 @@ struct ContentView: View {
             } else {
                 Text("Location: unknown")
             }
-            
-            Button("Refresh") {
-                refresh()
-            }
         }
         .padding()
         .onAppear {
-            refresh()
+            if configuration.get().username != "" {
+                refresh()
+            }
         }
         .alert(isPresented: $showAlert, content: {
             Alert(title: Text(self.alertTitle), message: Text(self.alertMessage), dismissButton: .default(Text("OK")))

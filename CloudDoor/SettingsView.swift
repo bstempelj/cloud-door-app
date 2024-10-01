@@ -15,13 +15,15 @@ struct SettingsView: View {
     @State private var username: String
     @State private var password: String
     @State private var hostname: String
+    
+    let productionHost = "https://api.doorcloud.com"
     let configuration = Configuration()
     
     init() {
         let values = configuration.get()
         self.username = values.username
         self.password = values.password
-        self.hostname = values.hostname
+        self.hostname = values.hostname == "" ? self.productionHost : values.hostname
     }
 
     var body: some View {
@@ -70,7 +72,7 @@ struct SettingsView: View {
             }
             
             Button("Reset to production host") {
-                self.hostname = "https://api.doorcloud.com"
+                self.hostname = self.productionHost
             }
             Button("Reset values to test configuration") {
                 self.username = "user@example.com"
