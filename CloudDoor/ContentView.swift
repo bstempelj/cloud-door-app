@@ -17,6 +17,13 @@ struct ContentView: View {
     @ObservedObject var locationManager = LocationManager()
     
     let configuration = Configuration()
+    let cache = Cache()
+    
+    init() {
+        // When starting the application, load locations from cache, to avoid waiting for the initial response from the API.
+        let cachedLocations = cache.getCachedLocations() ?? []
+        self.locations = getLocationsWithDistance(locations: cachedLocations, distanceToLocation: locationManager.location)
+    }
     
     func refresh() {
         Task {
@@ -24,6 +31,7 @@ struct ContentView: View {
                 let api = API.initFromConfiguration(configuration: self.configuration)
                 let token = try await api.getToken()
                 let locations = try await api.getLocations(token: token)
+                cache.setCachedLocations(locations: locations)
                 
                 self.locations = getLocationsWithDistance(locations: locations, distanceToLocation: locationManager.location)
             } catch {

@@ -10,7 +10,7 @@ struct TokenResponse: Decodable {
     var access_token: String
 }
 
-struct Geolocation: Decodable {
+struct Geolocation: Encodable, Decodable {
     var id: String
     var name: String
     var latitude: Float64
@@ -18,7 +18,7 @@ struct Geolocation: Decodable {
     var radius: Int
 }
 
-struct Location: Decodable {
+struct Location: Encodable, Decodable {
     var name: String
     var id: String
     var geolocations: [Geolocation]
