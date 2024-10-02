@@ -44,6 +44,20 @@ enum ApiError: Error {
     case runtimeError(String)
 }
 
+func urlEncodedParams(params: [String: String]) throws -> String {
+    let queryItems = params.map({ (key, value) in
+        URLQueryItem(name: key, value: value)
+    })
+    if var urlComponents = URLComponents(string: "") {
+        urlComponents.queryItems = queryItems
+        if let query = urlComponents.query {
+            return query
+        }
+    }
+    
+    throw ApiError.runtimeError("Failed to urlencode parameters")
+}
+
 class API {
     let url: String
     let username: String
@@ -97,7 +111,12 @@ class API {
     }
 
     func getToken() async throws -> String {
-        let data = "client_id=DoorCloudWebApp&grant_type=password&username=\(username)&password=\(password)"
+        let data = try urlEncodedParams(params: [
+            "client_id": "DoorCloudWebApp",
+            "grant_type": "password",
+            "username": username,
+            "password": password,
+        ])
         let response: TokenResponse = try await self.request(method: "POST", path: "/token", contentType: "application/x-www-form-urlencoded", data: data, token: nil)
         return response.access_token
     }
