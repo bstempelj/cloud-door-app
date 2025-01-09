@@ -27,29 +27,34 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        VStack {
+        NavigationView {
             Form {
-                LabeledContent {
-                    TextField(text: $username) {
-                        Text("User name (email)")
+                Section(header: Text("Account")) {
+                    LabeledContent {
+                        TextField("", text: $username, prompt: Text("required"))
+                            .keyboardType(UIKeyboardType.emailAddress)
+                            .autocapitalization(.none)
+                    } label: {
+                        Text("Email")
+                            .foregroundStyle(.secondary)
                     }
-                } label: {
-                  Text("User name")
-                }.keyboardType(UIKeyboardType.emailAddress)
-                LabeledContent {
-                    SecureField(text: $password) {
+
+                    LabeledContent {
+                        SecureField("", text: $password, prompt: Text("required"))
+                    } label: {
                         Text("Password")
+                            .foregroundStyle(.secondary)
                     }
-                } label: {
-                  Text("Password")
-                }
-                LabeledContent {
-                    TextField(text: $hostname) {
+
+                    LabeledContent {
+                        TextField("", text: $hostname, prompt: Text("required"))
+                            .autocapitalization(.none)
+                    } label: {
                         Text("Hostname")
+                            .foregroundStyle(.secondary)
                     }
-                } label: {
-                  Text("Hostname")
                 }
+
                 Button("Test & update") {
                     Task {
                         let api = API(url: self.hostname, username: username, password: password)
@@ -69,21 +74,23 @@ struct SettingsView: View {
                         }
                     }
                 }
+
+                Section(header: Text("Debug")) {
+                    Button("Reset to production host") {
+                        self.hostname = self.productionHost
+                    }
+                    Button("Reset values to test configuration") {
+                        self.username = "user@example.com"
+                        self.password = "password"
+                        self.hostname = "https://cloud-door-mock.test.dejanlevec.com"
+                    }
+                }
             }
-            
-            Button("Reset to production host") {
-                self.hostname = self.productionHost
-            }
-            Button("Reset values to test configuration") {
-                self.username = "user@example.com"
-                self.password = "password"
-                self.hostname = "https://cloud-door-mock.test.dejanlevec.com"
-            }
+            .navigationTitle("Settings")
+            .alert(isPresented: $showAlert, content: {
+                Alert(title: Text(self.alertTitle), message: Text(self.alertMessage), dismissButton: .default(Text("OK")))
+            })
         }
-        .padding()
-        .alert(isPresented: $showAlert, content: {
-            Alert(title: Text(self.alertTitle), message: Text(self.alertMessage), dismissButton: .default(Text("OK")))
-        })
     }
 }
 
