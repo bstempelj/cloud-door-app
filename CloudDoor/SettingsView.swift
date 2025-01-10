@@ -11,11 +11,13 @@ struct SettingsView: View {
     @State var alertTitle = ""
     @State var alertMessage = ""
     @State var showAlert = false
-    
+    @State var showAlertWithCancel = false
+
     @State private var username: String
     @State private var password: String
     @State private var hostname: String
     
+    let testingHost = "https://cloud-door-mock.test.dejanlevec.com"
     let productionHost = "https://api.doorcloud.com"
     let configuration = Configuration()
     
@@ -24,6 +26,12 @@ struct SettingsView: View {
         self.username = values.username
         self.password = values.password
         self.hostname = values.hostname == "" ? self.productionHost : values.hostname
+    }
+
+    func fillTestAccountInfo() {
+        self.username = "user@example.com"
+        self.password = "password"
+        self.hostname = testingHost
     }
 
     var body: some View {
@@ -80,15 +88,25 @@ struct SettingsView: View {
                         self.hostname = self.productionHost
                     }
                     Button("Reset values to test configuration") {
-                        self.username = "user@example.com"
-                        self.password = "password"
-                        self.hostname = "https://cloud-door-mock.test.dejanlevec.com"
+                        alertTitle = "Warning"
+                        alertMessage = "You are about to replace existing account info with test account info."
+                        showAlertWithCancel = true
                     }
                 }
             }
             .navigationTitle("Settings")
-            .alert(isPresented: $showAlert, content: {
-                Alert(title: Text(self.alertTitle), message: Text(self.alertMessage), dismissButton: .default(Text("OK")))
+            .alert(alertTitle, isPresented: $showAlertWithCancel, actions: {
+                Button("Cancel", role: .cancel) {}
+                Button("OK", role: .destructive) {
+                    fillTestAccountInfo()
+                }
+            }, message: {
+                Text(alertMessage)
+            })
+            .alert(alertTitle, isPresented: $showAlert, actions: {
+                Button("OK", role: .cancel) { }
+            }, message: {
+                Text(alertMessage)
             })
         }
     }
